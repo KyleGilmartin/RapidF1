@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1072847724654",
+    "project_id": "rapidpixelracinghub",
+    "storage_bucket": "rapidpixelracinghub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072847724654:android:c4afb4272c0fd839ed867f",
+        "android_client_info": {
+          "package_name": "com.example.rapidpixelracing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1072847724654-ka3po1dblk8sveffn7tnfpebtq6jtg2k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rapidpixelracing",
+            "certificate_hash": "7cc7b6d046064eb5ad5ff524e6d348469066607e"
+          }
+        },
+        {
+          "client_id": "1072847724654-fubugg4ctumil6t1gkmlomhsl9h3caqd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfdT5dUmxuzQCtLXf9QKz_Td3R0Cd8Z5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1072847724654-20svb5rv8jo4d2fin7q26cib1qrumjfk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
