@@ -18,7 +18,30 @@ class LandingScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
       ),
-      body: TiersLoading(),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Racing Tiers',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 500,
+              child: TiersLoading(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -22,16 +22,17 @@ class _TiersLoadingState extends State<TiersLoading> {
   String username =
       FirebaseAuth.instance.currentUser!.email.toString().split('@')[0];
 
-  uploadToFireStore(String tier) async {
+  Future<void> uploadToFireStore(String tier) async {
     EasyLoading.show();
 
     await _firestore
         .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid + tier)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
       'userId': FirebaseAuth.instance.currentUser!.uid,
       'name': username,
       'tier': tier,
+      'clicked': true,
       'pending': "yes",
       'accepted': "no",
       'baned': "no"
@@ -43,37 +44,17 @@ class _TiersLoadingState extends State<TiersLoading> {
 
   @override
   Widget build(BuildContext context) {
-    final CollectionReference _usersStream =
-        FirebaseFirestore.instance.collection("tiers");
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _usersStream.doc().snapshots(),
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+    final Stream<QuerySnapshot> _usersStream =
+        FirebaseFirestore.instance.collection('tiers').snapshots();
+    return StreamBuilder<QuerySnapshot>(
+      stream: _usersStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return Text("Something went wrong");
+          return Text('Something went wrong');
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("loading");
-        }
-
-        List<DocumentSnapshot> documents = snapshot.data!.docs;
-        List<String> titles = [];
-        List<String> colors = [];
-        List<String> ABS = [];
-        List<String> ManualGears = [];
-        List<String> TC = [];
-        List<String> RacingLine = [];
-
-        for (int i = 0; i < documents.length; i++) {
-          Map<String, dynamic> data =
-              documents[i].data() as Map<String, dynamic>;
-          titles.add(data['title']);
-          colors.add(data['cardColor']);
-          ABS.add(data['ABS']);
-          ManualGears.add(data['Manual Gears']);
-          TC.add(data['Traction Control']);
-          RacingLine.add(data['Racing Line']);
+          return Text("Loading");
         }
 
         Color? getColorFromString(String colorString) {
@@ -90,63 +71,67 @@ class _TiersLoadingState extends State<TiersLoading> {
           }
         }
 
-        UserModel user =
-            UserModel.fromJson(snapshot.data!.data()! as Map<String, dynamic>);
+        return ListView(
+          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            Color? cardColor = getColorFromString(data['cardColor']);
 
-        return Center(
-          child: ListView.builder(
-            itemCount: titles.length,
-            itemBuilder: (BuildContext context, int index) {
-              Color? cardColor = getColorFromString(colors[index]);
-              return Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Card(
-                  color: cardColor ?? Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 153,
-                    child: Center(
-                      child: user.pending == "no"
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  titles[index],
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Text('Tc: ' + TC[index]),
-                                      Text('ABS: ' + ABS[index]),
-                                      Text('Gears: ' + ManualGears[index]),
-                                      Text('Racing Line: ' + RacingLine[index]),
-                                    ],
-                                  ),
-                                ),
-                                OutlinedButton(
-                                  onPressed: () {
-                                    uploadToFireStore(titles[index]);
-                                  },
-                                  child: Text(
-                                    'Join',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Text('Pending'),
+            bool clicked = data['clicked'] ?? false;
+            String buttonText = clicked ? 'Pending' : 'Join';
+            bool buttonDisabled = clicked;
+
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Card(
+                color: cardColor ?? Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 153,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          data['title'],
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          data['description'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: buttonDisabled
+                              ? null
+                              : () {
+                                  uploadToFireStore(data['title']);
+                                },
+                          child: Text(buttonText),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          }).toList(),
         );
       },
     );
