@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rapidpixelracing/screens/widgets/tiers_loading.dart';
+import 'package:rapidpixelracing/screens/tier_screen.dart';
+import 'package:rapidpixelracing/screens/widgets/tier_list.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -8,38 +9,15 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 1,
-        title: Text(
-          'Welcome',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [Text('Welcome Kyle'), Text('Sign Out')],
         ),
-        backgroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 40,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Racing Tiers',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 500,
-              child: TiersLoading(),
-            ),
-          ],
+      body: SizedBox(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: TiersList(),
         ),
       ),
     );
