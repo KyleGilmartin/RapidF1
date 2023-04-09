@@ -106,47 +106,54 @@ class _TiersListState extends State<TiersList> {
                       bool isAccepted = userSnapshot.hasData &&
                           userSnapshot.data!.exists &&
                           userSnapshot.data!.get('accepted') == 'yes';
-                      return ElevatedButton(
-                        onPressed: isDisabled || isSubmitting[cardId]!
-                            ? null
-                            : () async {
-                                setState(() {
-                                  isSubmitting[cardId] = true;
-                                });
-                                if (isAccepted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => TierDetails(
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return ElevatedButton(
+                            onPressed: isDisabled || isSubmitting[cardId]!
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      isSubmitting[cardId] = true;
+                                    });
+                                    if (isAccepted) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => TierDetails(
                                             title: doc['title'],
-                                            description: doc['description'])),
-                                  );
-                                  setState(() {
-                                    isSubmitting[cardId] = false;
-                                  });
-                                } else {
-                                  await updateOrCreateUser([cardId]);
-                                  setState(() {
-                                    isSubmitting[cardId] = false;
-                                  });
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDisabled
-                              ? Colors.grey
-                              : isAccepted
-                                  ? Colors.green
-                                  : Colors.red,
-                        ),
-                        child: Text(
-                          isDisabled
-                              ? 'Pending'
-                              : isSubmitting[cardId] == true
-                                  ? 'Signing up...'
+                                            description: doc['description'],
+                                          ),
+                                        ),
+                                      );
+                                      setState(() {
+                                        isSubmitting[cardId] = false;
+                                      });
+                                    } else {
+                                      await updateOrCreateUser([cardId]);
+
+                                      setState(() {
+                                        isSubmitting[cardId] = false;
+                                      });
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isDisabled
+                                  ? Colors.grey
                                   : isAccepted
-                                      ? 'View'
-                                      : 'Sign up',
-                        ),
+                                      ? Colors.green
+                                      : Colors.red,
+                            ),
+                            child: Text(
+                              isDisabled
+                                  ? 'Pending'
+                                  : isSubmitting[cardId] == true
+                                      ? 'Signing up...'
+                                      : isAccepted
+                                          ? 'View'
+                                          : 'Sign up',
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
